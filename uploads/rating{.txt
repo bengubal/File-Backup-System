@@ -1,0 +1,7 @@
+rating{
+fotoğrafa - rating ve average rating,
+usera sadece average rating eklenecek
+}
+authorization
+crud işlemleri
+encapsulation
