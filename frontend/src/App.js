@@ -4,6 +4,7 @@ import Login from "./components/LoginPage";
 import Register from "./components/RegisterPage";
 import AdminDashboard from "./components/AdminDashboard";
 import UserProfile from "./components/UserProfile";
+import "./App.css"; // App.css dosyasını buraya dahil edin
 
 function App() {
   return (

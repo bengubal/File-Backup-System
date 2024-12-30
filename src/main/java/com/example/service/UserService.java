@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -99,25 +100,51 @@ public class UserService {
         userRepository.deleteById(id);
  
     }
-    
-    public String addFriendByUsername(String username, String friendUsername) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı: " + username));
+    public String addFriendById(String userId, String friendId) {
+        // Kullanıcıyı bul
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı: " + userId));
         
-        User friend = userRepository.findByUsername(friendUsername)
-                .orElseThrow(() -> new RuntimeException("Arkadaş bulunamadı: " + friendUsername));
+        // Arkadaşı bul
+        User friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new RuntimeException("Arkadaş bulunamadı: " + friendId));
         
+        // Eğer kullanıcı zaten arkadaş değilse, kullanıcıyı arkadaş listesine ekle
         if (!user.getFriends().contains(friend.getId())) {
             user.getFriends().add(friend.getId());
             userRepository.save(user);
+        } else {
+            return "Bu kullanıcı zaten arkadaşınız!";
         }
 
         if (!friend.getFriends().contains(user.getId())) {
             friend.getFriends().add(user.getId());
             userRepository.save(friend);
+        } else {
+            return "Arkadaşınız zaten sizi eklemiş!";
         }
 
         return "Arkadaş başarıyla eklendi!";
     }
+    
+    public List<String> getUserFriends(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Kullanıcı bulunamadı: " + userId));
+        
+        // Hata ayıklama
+        System.out.println("Arkadaşlar ID'leri: " + user.getFriends());  // Arkadaşlar ID'lerini yazdır
+
+        List<String> friendsUsernames = user.getFriends().stream()
+                .map(friendId -> {
+                    System.out.println("Arkadaş ID: " + friendId);  // Her arkadaşın ID'sini yazdır
+                    User friend = userRepository.findById(friendId)
+                            .orElseThrow(() -> new RuntimeException("Arkadaş bulunamadı: " + friendId));
+                    return friend.getUsername();
+                })
+                .collect(Collectors.toList());
+
+        return friendsUsernames;
+    }
+
 
 }

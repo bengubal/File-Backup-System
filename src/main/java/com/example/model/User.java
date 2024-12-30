@@ -15,18 +15,21 @@ public class User {
     private String userId;
     private String username;
     private String password;
-    private List<String> uploadedFiles;  // Kullanıcının yüklediği dosya id'si
+    private List<String> uploadedFiles; 
     private long storageLimit;
     private boolean passwordChangeRequest;
-    private String role = "ROLE_USER";    //Default Setter Atamamışsın
-    private List<String> teams; // Katıldığı takım idlerini saklar
-    private List<String> friends; // Arkadaşların ID’lerini tutar
+    private String role = "ROLE_USER";    
+    private List<String> teams; 
+    private List<String> friends; 
     private List<String> sharedFiles; 
 
     public User(){
         this.teams=new ArrayList<>();
+        this.friends=new ArrayList<>();
+        this.sharedFiles=new ArrayList<>();
+        
     }
-      // Constructor'lar, getter'lar, setter'lar (Eksik olanları tamamlayın)
+
 
     public User(String userId, String username, String password, String role, long storageLimit) {
         this.userId = userId;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../style/admin.css";
 import axios from "axios";
 
 const AdminDashboard = () => {
@@ -101,13 +102,13 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
+    <div className="admin-container">
+      <h2 className="admin-title">Admin Dashboard</h2>
+      {error && <p className="admin-error">{error}</p>}
+      {success && <p className="admin-success">{success}</p>}
 
       <h3>Users</h3>
-      <table>
+      <table className="admin-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -148,33 +149,42 @@ const AdminDashboard = () => {
       </table>
 
       <h3>Logs</h3>
-      <ul>
-        {logs.map((log) => (
-          <li key={log.id}>{log.message}</li>
-        ))}
-      </ul>
+      <div className="admin-log-container">
+        <ul>
+          {logs.map((log) => (
+            <li key={log.id}>
+              {log.username} - {log.details}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <h3>Password Change Requests</h3>
-      <ul>
-        {passwordChangeRequests.map((request) => (
-          <li key={request.id}>
-            <span>{request.username}</span>
-            <button
-              onClick={() => handlePasswordChangeRequestApproval(request.id)}
-            >
-              Approve
-            </button>
-            <button
-              onClick={() => handlePasswordChangeRequestRejection(request.id)}
-            >
-              Reject
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className="admin-password-request-container">
+        <h3>Password Change Requests</h3>
+        <ul>
+          {passwordChangeRequests.map((request) => (
+            <li key={request.id}>
+              <span>{request.username}</span>
+              <button
+                onClick={() => handlePasswordChangeRequestApproval(request.id)}
+              >
+                Approve
+              </button>
+              <button
+                onClick={() => handlePasswordChangeRequestRejection(request.id)}
+              >
+                Reject
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <h2>Update User Storage Limit</h2>
-      <form onSubmit={handleStorageLimitUpdate}>
+      <form
+        className="admin-storage-update-form"
+        onSubmit={handleStorageLimitUpdate}
+      >
         <div>
           <label>User ID:</label>
           <input

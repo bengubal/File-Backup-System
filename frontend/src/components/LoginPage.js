@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "../style/login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -37,32 +39,41 @@ function LoginPage() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Username</label>
+    <div className="login-container">
+      <h2 className="login-title">Giriş Yap</h2>
+      {error && <p className="login-error">{error}</p>}
+      <form className="login-form" onSubmit={handleLogin}>
+        <div className="login-input-group">
+          <label className="login-label">Kullanıcı Adı</label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            className="login-input-field"
           />
         </div>
-        <div>
-          <label>Password</label>
+        <div className="login-input-group">
+          <label className="login-label">Şifre</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="login-input-field"
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" className="login-button">
+          Giriş
+        </button>
       </form>
+      <p className="login-register-link">
+        Hesabın yok mu?{" "}
+        <Link to="/register" className="login-register-link-text">
+          Hemen kayıt ol
+        </Link>
+      </p>
     </div>
   );
 }
-
 export default LoginPage;

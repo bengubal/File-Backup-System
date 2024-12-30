@@ -7,64 +7,47 @@ import java.time.LocalDateTime;
 
 @Document(collection = "logs")
 public class LogEntry {
+
     @Id
-    private String id;
-    private LocalDateTime timestamp;
-    private String type;
-    private String message;
-    private User user;
+    private String _id;
+
+    private String username;
+    private String action;
+    private String status;
     private String details;
-    // Diğer alanlar ve getter/setter'lar...
+    private LocalDateTime timestamp;
 
-
-    public LogEntry(LocalDateTime timestamp, String type, String message, User user, String details) {
-        this.timestamp = timestamp;
-        this.type = type;
-        this.message = message;
-        this.user = user;
-        this.details = details;
-    }
-   public LogEntry(){
-
-   }
+    // Getter ve Setter'lar
     public String getId() {
-        return id;
+        return _id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this._id = id;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public String getUsername() {
+        return username;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getType() {
-        return type;
+    public String getAction() {
+        return action;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setAction(String action) {
+        this.action = action;
     }
 
-    public String getMessage() {
-        return message;
+    public String getStatus() {
+        return status;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getDetails() {
@@ -73,5 +56,13 @@ public class LogEntry {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }

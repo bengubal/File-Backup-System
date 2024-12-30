@@ -1,0 +1,392 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+const UserProfile = () => {
+  const [userId, setUserId] = useState(null);
+  const [username, setUsername] = useState("");
+  const [userDetails, setUserDetails] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
+  const [friends, setFriends] = useState([]);
+  const [newFriendId, setNewFriendId] = useState("");
+  const [message, setMessage] = useState("");
+  const [sharedFiles, setSharedFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState("");
+
+  // Axios instance'ı oluştur
+  const axiosInstance = axios.create({
+    baseURL: "/fms",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    } else {
+      setMessage("Giriş bilgileri bulunamadı. Lütfen giriş yapın.");
+    }
+
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    } else {
+      setMessage("Giriş bilgileri bulunamadı. Lütfen giriş yapın.");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      const fetchUserDetails = async () => {
+        try {
+          const response = await axiosInstance.get(`/user/${userId}`);
+          setUserDetails(response.data);
+        } catch (error) {
+          console.error("Kullanıcı bilgileri alınamadı:", error);
+          setMessage("Kullanıcı bilgileri alınamadı.");
+        }
+      };
+      fetchUserDetails();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      const fetchFiles = async () => {
+        try {
+          const response = await axiosInstance.get(`/files/list/${userId}`);
+          setFiles(response.data);
+        } catch (error) {
+          console.error("Dosyalar alınırken hata oluştu:", error);
+          setMessage("Dosyalar alınırken hata oluştu.");
+        }
+      };
+      fetchFiles();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      if (userId) {
+        try {
+          const response = await axiosInstance.get(`/friends?userId=${userId}`);
+          if (Array.isArray(response.data)) {
+            setFriends(response.data);
+          } else {
+            console.error("Arkadaşlar dizi olarak gelmedi:", response.data);
+            setFriends([]);
+            setMessage("Arkadaşlar alınamadı (hatalı veri formatı).");
+          }
+        } catch (error) {
+          console.error("Arkadaşlar alınamadı:", error);
+          setMessage("Arkadaşlar alınamadı.");
+          setFriends([]);
+        }
+      }
+    };
+    fetchFriends();
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchSharedFiles = async () => {
+      if (username) {
+        try {
+          const response = await axiosInstance.get(
+            `/friends/shared?username=${username}`
+          );
+          if (Array.isArray(response.data)) {
+            setSharedFiles(response.data);
+          } else {
+            console.error(
+              "Paylaşılan dosyalar dizi olarak gelmedi:",
+              response.data
+            );
+            setSharedFiles([]);
+            setMessage("Paylaşılan dosyalar alınamadı (hatalı veri formatı).");
+          }
+        } catch (error) {
+          console.error("Paylaşılan dosyalar alınamadı:", error);
+          setMessage("Paylaşılan dosyalar alınamadı.");
+          setSharedFiles([]);
+        }
+      }
+    };
+    fetchSharedFiles();
+  }, [username]);
+
+  const handlePasswordChange = async () => {
+    if (!newPassword) {
+      setMessage("Lütfen yeni bir şifre girin.");
+      return;
+    }
+    try {
+      await axiosInstance.post(`/user/${userId}/password-change-request`, {
+        newPassword,
+      });
+      setMessage("Şifre değiştirme isteği başarıyla gönderildi.");
+      setNewPassword("");
+    } catch (error) {
+      console.error("Şifre değiştirilemedi:", error);
+      setMessage("Şifre değiştirilemedi.");
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!file) {
+      setMessage("Lütfen bir dosya seçin.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      await axiosInstance.post(`/files/upload/${userId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setMessage("Dosya başarıyla yüklendi.");
+      const fetchFiles = async () => {
+        try {
+          const response = await axiosInstance.get(`/files/list/${userId}`);
+          setFiles(response.data);
+        } catch (error) {
+          console.error("Dosyalar alınırken hata oluştu:", error);
+          setMessage("Dosyalar alınırken hata oluştu.");
+        }
+      };
+      fetchFiles();
+    } catch (error) {
+      console.error("Dosya yüklenemedi:", error);
+      setMessage("Dosya yüklenemedi.");
+    }
+  };
+
+  const handleFileDownload = async (fileName) => {
+    try {
+      const response = await axiosInstance.get(
+        `/files/download/${userId}/${fileName}`,
+        {
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      setMessage("Dosya başarıyla indirildi.");
+    } catch (error) {
+      console.error("Dosya indirilemedi:", error);
+      setMessage("Dosya indirilemedi.");
+    }
+  };
+
+  const handleAddFriend = async () => {
+    if (!newFriendId) {
+      setMessage("Lütfen arkadaşın ID'sini girin.");
+      return;
+    }
+    try {
+      const response = await axiosInstance.post(`/addFriend`, null, {
+        params: { userId, friendId: newFriendId },
+      });
+      setMessage(response.data);
+      setNewFriendId("");
+      const fetchFriends = async () => {
+        if (userId) {
+          try {
+            const response = await axiosInstance.get(
+              `/friends?userId=${userId}`
+            );
+            if (Array.isArray(response.data)) {
+              setFriends(response.data);
+            } else {
+              console.error("Arkadaşlar dizi olarak gelmedi:", response.data);
+              setFriends([]);
+              setMessage("Arkadaşlar alınamadı (hatalı veri formatı).");
+            }
+          } catch (error) {
+            console.error("Arkadaşlar alınamadı:", error);
+            setMessage("Arkadaşlar alınamadı.");
+            setFriends([]);
+          }
+        }
+      };
+      fetchFriends();
+    } catch (error) {
+      console.error("Arkadaş eklenemedi:", error);
+      setMessage("Arkadaş eklenemedi.");
+    }
+  };
+
+  const handleFileShare = async () => {
+    if (!selectedFile) {
+      setMessage("Lütfen paylaşmak istediğiniz dosyayı seçin.");
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.post(`/share`, null, {
+        params: { username, fileName: selectedFile },
+      });
+      setMessage(response.data);
+      setSelectedFile("");
+      const fetchSharedFiles = async () => {
+        if (username) {
+          try {
+            const response = await axiosInstance.get(
+              `/friends/shared?username=${username}`
+            );
+            if (Array.isArray(response.data)) {
+              setSharedFiles(response.data);
+            } else {
+              console.error(
+                "Paylaşılan dosyalar dizi olarak gelmedi:",
+                response.data
+              );
+              setSharedFiles([]);
+              setMessage(
+                "Paylaşılan dosyalar alınamadı (hatalı veri formatı)."
+              );
+            }
+          } catch (error) {
+            console.error("Paylaşılan dosyalar alınamadı:", error);
+            setMessage("Paylaşılan dosyalar alınamadı.");
+            setSharedFiles([]);
+          }
+        }
+      };
+      fetchSharedFiles();
+    } catch (error) {
+      console.error("Dosya paylaşılmadı:", error);
+      setMessage("Dosya paylaşılmadı.");
+    }
+  };
+
+  if (!userDetails) {
+    return <div>{message || "Kullanıcı bilgileri yükleniyor..."}</div>;
+  }
+
+  return (
+    <div>
+      <h1>Profil Sayfası</h1>
+
+      {/* Kullanıcı bilgileri */}
+      <div>
+        <h2>Hoşgeldiniz, {userDetails.username}</h2>
+        <p>
+          <strong>Rol:</strong> {userDetails.role || "Belirtilmemiş"}
+        </p>
+        <p>
+          <strong>Depolama Limiti:</strong> {userDetails.storageLimit || "0"} MB
+        </p>
+        <p>
+          <strong>Kullanıcı ID:</strong> {userDetails.id}
+        </p>
+      </div>
+
+      {/* Arkadaş ekleme */}
+      <div>
+        <h3>Arkadaş Ekle</h3>
+        <input
+          type="text"
+          placeholder="Arkadaşın ID'si"
+          value={newFriendId}
+          onChange={(e) => setNewFriendId(e.target.value)}
+        />
+        <button onClick={handleAddFriend}>Arkadaş Ekle</button>
+      </div>
+
+      {/* Şifre değiştirme */}
+      <div>
+        <h3>Şifre Değiştir</h3>
+        <input
+          type="password"
+          placeholder="Yeni Şifre"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+        <button onClick={handlePasswordChange}>Şifreyi Değiştir</button>
+      </div>
+
+      {/* Dosya yükleme */}
+      <div>
+        <h3>Dosya Yükle</h3>
+        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+        <button onClick={handleFileUpload}>Yükle</button>
+      </div>
+
+      {/* Kullanıcının dosyaları */}
+      <div>
+        <h3>Dosyalar</h3>
+        {files.length > 0 ? (
+          <ul>
+            {files.map((fileName, index) => (
+              <li key={index}>
+                {fileName}{" "}
+                <button onClick={() => handleFileDownload(fileName)}>
+                  İndir
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Hiç dosya bulunamadı.</p>
+        )}
+      </div>
+
+      {/* Kullanıcının arkadaşları */}
+      <div>
+        <h3>Arkadaşlar</h3>
+        {Array.isArray(friends) && friends.length > 0 ? (
+          <ul>
+            {friends.map((friend, index) => (
+              <li key={index}>{friend}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>Hiç arkadaşınız yok.</p>
+        )}
+      </div>
+
+      {/* Dosya paylaşımı */}
+      <div>
+        <h3>Arkadaşlarla Dosya Paylaş</h3>
+        <select
+          onChange={(e) => setSelectedFile(e.target.value)}
+          value={selectedFile}
+        >
+          <option value="">Dosya Seç</option>
+          {files.map((fileName, index) => (
+            <option key={index} value={fileName}>
+              {fileName}
+            </option>
+          ))}
+        </select>
+        <button onClick={handleFileShare}>Dosya Paylaş</button>
+      </div>
+
+      {/* Paylaşılan dosyalar */}
+      <div>
+        <h3>Arkadaşlarınızın Paylaştığı Dosyalar</h3>
+        {Array.isArray(sharedFiles) && sharedFiles.length > 0 ? (
+          <ul>
+            {sharedFiles.map((fileName, index) => (
+              <li key={index}>{fileName}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>Hiç paylaşılan dosya yok.</p>
+        )}
+      </div>
+
+      {/* Hata mesajı */}
+      {message && <p>{message}</p>}
+    </div>
+  );
+};
+
+export default UserProfile;

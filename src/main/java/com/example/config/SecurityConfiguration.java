@@ -4,10 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -15,31 +17,37 @@ public class SecurityConfiguration {
 
     // Password Encoder Bean
     @Bean
-    public PasswordEncoder encoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // CORS Configuration Bean
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Auth ile ilgili URL'lere erişimi izin ver
-                        .requestMatchers("/fms/**").permitAll()  // FMS ile ilgili URL'lere erişimi izin ver
-                        .requestMatchers("/admin/**").permitAll() // Admin ile ilgili URL'lere erişimi izin ver
-                        .requestMatchers("/file-management").permitAll() // Bu URL'ye de izin ver
-                        .requestMatchers("/login").permitAll() 
-                        .requestMatchers("/static/**").permitAll()  // Statik dosyalar için
-                        .requestMatchers("/login", "/static/**", "/public/**", "/css/**", "/js/**", "/images/**").permitAll() // "/login" ve statik kaynaklara izin ver
-                        .anyRequest().authenticated()
-                )
-                        .formLogin(form -> form
-                                .permitAll()
-                        )
-                        .logout(logout -> logout
-                                .permitAll()
-                        );
-        return http.build();
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOriginPattern("*");  // Tüm domainlerden erişime izin verir
+        configuration.addAllowedMethod("*");        // Tüm HTTP metodlarına izin verir
+        configuration.addAllowedHeader("*");        // Tüm başlıklara izin verir
+        configuration.setAllowCredentials(true);    // Kimlik doğrulama bilgilerini iletmek için
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);  // Tüm URL'lere bu CORS yapılandırmasını uygular
+        return source;
     }
 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable()) // CSRF korumasını devre dışı bırakıyoruz
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS yapılandırmasını ekliyoruz
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/**").permitAll() // Yetkilendirme gerektirmeyen yollar
+                .requestMatchers("/fms/**").permitAll()
+                .requestMatchers("/admin/**").permitAll()
+                .requestMatchers("/file-management").permitAll()
+                .requestMatchers("/login").permitAll()
+                .anyRequest().authenticated() // Geri kalan her istekte doğrulama gerektir
+            )
+            .httpBasic(httpBasic -> {}); // httpBasic() için yeni önerilen Customizer yöntemi
+        return http.build();
+    }
 }

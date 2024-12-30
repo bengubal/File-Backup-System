@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin")
@@ -60,29 +61,29 @@ public class AdminController {
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have admin access!");
     }
-    
 
-    @GetMapping("/users/{adminId}/logs/{id}")
-    public ResponseEntity<?> getUserLogs(@PathVariable String adminId, @PathVariable String id) {
-        User admin = userService.getUserById(adminId);
-        if(admin != null && admin.getRole().equals("ROLE_ADMIN")){
-            List<LogEntry> logs = logService.getUserLogs(id);
-            return ResponseEntity.ok(logs);
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have admin access!");
-    }
-    
-
+    /**
+     * Get all logs (admin only).
+     *
+     * @param adminId The admin user's ID.
+     * @return All logs or an error message if unauthorized.
+     */
     @GetMapping("/logs/{adminId}")
-    public ResponseEntity<?> getAllLogs(@PathVariable String adminId){
+    public ResponseEntity<?> getAllLogs(@PathVariable String adminId) {
+        // Check if the requesting user is an admin
         User admin = userService.getUserById(adminId);
-        if(admin != null && admin.getRole().equals("ROLE_ADMIN")){
-            List<LogEntry> allLogs = logService.getAllLogs();
-            return ResponseEntity.ok(allLogs);
+        if (admin != null && "ROLE_ADMIN".equals(admin.getRole())) {
+            try {
+                // Retrieve all logs
+                List<LogEntry> allLogs = logService.getAllLogs();
+                return ResponseEntity.ok(allLogs);
+            } catch (Exception e) {
+                // Handle any exceptions (e.g., logs not found)
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving logs.");
+            }
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have admin access!");
     }
-
     
     @PutMapping("/users/{adminId}/password/{userId}")
     public ResponseEntity<?> updateUserPassword(@PathVariable String adminId, @PathVariable String userId, @RequestParam String newPassword){

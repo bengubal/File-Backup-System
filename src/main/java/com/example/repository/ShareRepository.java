@@ -1,13 +1,13 @@
 package com.example.repository;
 
+
+import com.example.model.Share;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-
-import com.example.model.LogEntry;
 
 import java.util.List;
 
 @Repository
-public interface LogEntryRepository extends MongoRepository<LogEntry, String> {
-    List<LogEntry> findByUsername(String username);
+public interface ShareRepository extends MongoRepository<Share, String> {
+   List<Share> findByReceiverId(String receiverId);
 }

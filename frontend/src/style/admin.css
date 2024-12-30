@@ -1,0 +1,505 @@
+/* Genel stil ayarları */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8e8f6; /* Açık pembe arka plan */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  /* Başlık */
+  h2 {
+    text-align: center;
+    color: #e91e63; /* Pembe başlık */
+    margin-bottom: 20px;
+    font-size: 2em;
+  }
+  
+  /* Hata ve başarı mesajları */
+  p {
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  p[style*="color: red"] {
+    color: red;
+  }
+  
+  p[style*="color: green"] {
+    color: green;
+  }
+  
+  /* Kullanıcı tablosu */
+  table {
+    width: 80%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  table,
+  th,
+  td {
+    border: 1px solid #d6a7c2; /* Pembe tonlarda border */
+  }
+  
+  th,
+  td {
+    padding: 12px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #e91e63; /* Pembe başlık arka planı */
+    color: white;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f9f0f7; /* Açık pembe satır arka planı */
+  }
+  
+  tr:hover {
+    background-color: #f2e8f5; /* Açık pembe hover arka planı */
+  }
+  
+  button {
+    background-color: #e91e63; /* Pembe buton */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #c2185b; /* Daha koyu pembe buton hover */
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Loglar */
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    background-color: #f9f0f7; /* Açık pembe satır arka planı */
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 4px;
+  }
+  
+  li:hover {
+    background-color: #f2e8f5; /* Açık pembe hover arka planı */
+  }
+  
+  /* Dosya listeleme */
+  ul li {
+    padding-left: 10px;
+  }
+  
+  /* Form stil */
+  form {
+    background-color: #fff;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: inline-block;
+    color: #e91e63; /* Pembe etiket */
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #d6a7c2; /* Pembe tonlarda input border */
+      box-sizing: border-box;
+    outline: none; /*input seçildiğinde gelen outlineı kaldırır*/
+      box-shadow: 0 0 3px rgba(233, 30, 99, 0.5); /*input seçildiğinde gelen shadowu ekler*/
+  }
+  
+  
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+   input[type="password"]:focus{
+    border-color: #e91e63; /* Input focus rengi pembe*/
+      outline: none; /*input seçildiğinde gelen outlineı kaldırır*/
+  
+  }
+  
+  /* Scrollable log */
+  div[style*="maxHeight"] {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  /* Responsive Düzen */
+  @media (max-width: 768px) {
+    table {
+      width: 100%;
+    }
+  
+    form {
+      width: 90%;
+    }
+  }
+  /*Login Page*/
+  .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f8e8f6; /* Açık pembe arka plan */
+      font-family: "Arial", sans-serif;
+  }
+  
+  .login-title {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #e91e63; /* Pembe başlık */
+  }
+  
+  .login-form {
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+      padding: 20px;
+      border: 1px solid #e91e63; /* Pembe çerçeve */
+      border-radius: 8px;
+      background-color: #fff; /* Beyaz form arka planı */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+  }
+  
+  .login-label {
+      margin-bottom: 5px;
+      color: #e91e63; /* Pembe etiket rengi */
+  }
+  
+  .login-input-field {
+      padding: 10px;
+      border: 1px solid #d6a7c2; /* Pembe tonlarda border */
+      border-radius: 4px;
+      font-size: 1em;
+      color: #333;
+      outline: none;
+       box-shadow: 0 0 3px rgba(233, 30, 99, 0.5); /*input seçildiğinde gelen shadowu ekler*/
+  
+  }
+  
+  .login-button {
+      padding: 10px;
+      background-color: #e91e63; /* Pembe buton rengi */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1.1em;
+      transition: background-color 0.3s;
+  }
+  
+  .login-button:hover {
+      background-color: #c2185b; /* Daha koyu pembe hover */
+  }
+  
+  .login-register-link {
+      margin-top: 20px;
+      color: #666;
+  }
+  
+  .login-register-link-text {
+      color: #e91e63;
+      text-decoration: underline;
+  }
+  
+  .login-error {
+      color: red;
+      margin-bottom: 10px;
+  }
+  /*Admin Dashboard*/
+  
+  .admin-container {
+      padding: 20px;
+      background-color: #f2e8f5; /* Açık pembe arka plan */
+      font-family: "Arial", sans-serif;
+  }
+  
+  
+  .admin-title {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #e91e63; /* Pembe başlık */
+  }
+  
+  
+  .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+      border: 1px solid #d6a7c2; /* Pembe tonlarda çerçeve */
+      padding: 8px;
+      text-align: left;
+  }
+  
+  .admin-table th {
+      background-color: #e91e63; /* Pembe başlık arka planı */
+      color: white;
+  }
+  
+  .admin-log-container {
+      max-height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #d6a7c2;
+      padding: 10px;
+      font-family: 'Arial', sans-serif;
+  }
+  
+  .admin-password-request-container {
+      margin-bottom: 20px;
+  }
+  .admin-password-request-container ul{
+      list-style: none;
+      padding: 0;
+  }
+  
+  .admin-password-request-container li {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #d6a7c2;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .admin-password-request-container li button{
+      padding: 5px 10px;
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-left: 5px;
+  }
+  .admin-password-request-container li button:hover{
+      background-color: #c2185b;
+  }
+  .admin-storage-update-form div{
+      margin-bottom: 10px;
+  }
+  .admin-storage-update-form label{
+      margin-bottom: 5px;
+      color: #e91e63;
+      display: block;
+  }
+  
+  .admin-storage-update-form input{
+      padding: 10px;
+      border: 1px solid #d6a7c2;
+      border-radius: 4px;
+      font-size: 1em;
+      color: #333;
+      outline: none;
+      box-shadow: 0 0 3px rgba(233, 30, 99, 0.5);
+  }
+  .admin-storage-update-form button {
+      padding: 10px;
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+  }
+  .admin-storage-update-form button:hover {
+      background-color: #c2185b;
+  }
+  .admin-error {
+      color: red;
+      margin-bottom: 10px;
+  }
+  .admin-success {
+      color: green;
+      margin-bottom: 10px;
+  }
+  /*User Profile*/
+  .profile-container {
+      padding: 20px;
+      background-color: #f9f0f7;
+      font-family: 'Arial', sans-serif;
+  }
+  .profile-title {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #e91e63;
+  }
+  .profile-info-section,
+  .profile-password-section,
+  .profile-file-upload-section,
+  .profile-file-list-section,
+  .profile-shared-files-section,
+  .profile-friend-add-section,
+  .profile-friends-list-section{
+      margin-bottom: 20px;
+      border: 1px solid #d6a7c2;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-info-section h2,
+  .profile-password-section h3,
+  .profile-file-upload-section h3,
+  .profile-file-list-section h3,
+  .profile-shared-files-section h3,
+  .profile-friend-add-section h3,
+  .profile-friends-list-section h3{
+      margin-bottom: 10px;
+      color: #e91e63;
+  }
+  .profile-password-section input,
+  .profile-file-upload-section input,
+  .profile-friend-add-section input,
+  .profile-file-share-section select{
+      padding: 10px;
+      border: 1px solid #d6a7c2;
+      border-radius: 4px;
+      font-size: 1em;
+      color: #333;
+      outline: none;
+      box-shadow: 0 0 3px rgba(233, 30, 99, 0.5);
+  
+  }
+  
+  .profile-password-section button,
+  .profile-file-upload-section button,
+  .profile-friend-add-section button,
+  .profile-file-share-section button {
+      padding: 10px;
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+  
+  }
+  .profile-password-section button:hover,
+  .profile-file-upload-section button:hover,
+  .profile-friend-add-section button:hover,
+  .profile-file-share-section button:hover {
+      background-color: #c2185b;
+  }
+  
+  
+  .profile-file-list-section ul {
+      list-style: none;
+      padding: 0;
+  }
+  
+  .profile-file-list-section li {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+  }
+  .profile-file-list-section li button{
+      padding: 5px 10px;
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-left: 5px;
+  }
+  .profile-file-list-section li button:hover{
+      background-color: #c2185b;
+  }
+  .profile-shared-files-section ul{
+      list-style: none;
+      padding: 0;
+  }
+  .profile-shared-files-section li{
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #d6a7c2;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .profile-shared-files-section li button{
+      padding: 5px 10px;
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-left: 5px;
+  }
+  .profile-shared-files-section li button:hover{
+      background-color: #c2185b;
+  }
+  
+  .profile-friends-list-section ul {
+      list-style: none;
+      padding: 0;
+  }
+  .profile-friends-list-section li{
+      margin-bottom: 5px;
+      border: 1px solid #d6a7c2;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-error {
+      color: red;
+      margin-bottom: 10px;
+  }

@@ -1,44 +1,69 @@
 package com.example.service;
 
 import com.example.model.LogEntry;
-import com.example.model.User;
 import com.example.repository.LogEntryRepository;
-import com.example.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class LogService {
+
     private final LogEntryRepository logEntryRepository;
-    private final UserRepository userRepository;
 
+    @Value("${log.file.path}")
+    private String logFilePath;
 
-     
-    public LogService(LogEntryRepository logEntryRepository, UserRepository userRepository){
+    public LogService(LogEntryRepository logEntryRepository) {
         this.logEntryRepository = logEntryRepository;
-         this.userRepository= userRepository;
     }
 
-    public List<LogEntry> getUserLogs(String userId) {
-     
-        return logEntryRepository.findByUser_Id(userId);
+
+    public void log(String username, String action, String status, String details) {
+        // Log nesnesi oluştur
+        LogEntry logEntry = new LogEntry();
+        logEntry.setUsername(username);
+        logEntry.setAction(action);
+        logEntry.setStatus(status);
+        logEntry.setDetails(details);
+        logEntry.setTimestamp(LocalDateTime.now());
+
+        // MongoDB'ye kaydet
+        saveLogToDatabase(logEntry);
+
+        // Dosyaya kaydet
+        saveLogToFile(username, action, status, details);
     }
-    public List<LogEntry> getAllLogs(){
-        return logEntryRepository.findAll();
-    }
-    public void saveLog(LogEntry logEntry){
+
+ 
+    private void saveLogToDatabase(LogEntry logEntry) {
         logEntryRepository.save(logEntry);
     }
-       public User getUserByUsername(String username) {
-          Optional<User> userOptional = userRepository.findByUsername(username);
-           return userOptional.orElse(null);
-    }
-       public User getUserById(String userId){
-            Optional<User> optionalUser = userRepository.findById(userId);
-            return optionalUser.orElse(null);
-        }
 
+
+    private void saveLogToFile(String username, String action, String status, String details) {
+        try (FileWriter fw = new FileWriter(logFilePath, true);  // true: Append mode
+             PrintWriter pw = new PrintWriter(fw)) {
+
+            // Log mesajını oluştur
+            String logMessage = String.format("%s - User: %s, Action: %s, Status: %s, Details: %s",
+                    LocalDateTime.now(), username, action, status, details);
+
+            // Log mesajını dosyaya yaz
+            pw.println(logMessage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public List<LogEntry> getAllLogs() {
+        return logEntryRepository.findAll();
+    }
 }
