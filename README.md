@@ -25,12 +25,12 @@ The goal of this project is to provide **a secure and efficient file backup solu
 
 ## 📦 Installation & Usage  
 
-### 1️⃣ Clone the Project  
+ 1️⃣ Clone the Project  
 ```bash
 git clone https://github.com/bengubal/File-Backup-System.git
 cd File-Backup-System
 
-### 2️⃣ Install Dependencies
+ 2️⃣ Install Dependencies
 ```bash
 mvn clean install
 3️⃣ Configure MongoDB Connection
